@@ -5,3 +5,4 @@ sdkconfig*
 wasm-project/target/
 */target/
 *.wasm.h
+target/
