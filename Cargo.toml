@@ -1,5 +1,5 @@
 [package]
-name = "wasm-project"
+name = "nmea_attack"
 version = "0.1.0"
 edition = "2021"
 
