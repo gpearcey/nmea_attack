@@ -1,7 +1,7 @@
 //! Contains a struct to represent a NMEA message and functions to convert between NMEAMsg and strings
 
 /// Represents a NMEA 2000 Message
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct NMEAMsg {
     controller_num:         u8,
     priority:               u8,
@@ -11,11 +11,11 @@ pub struct NMEAMsg {
     data:                   Vec<u8>  
 }
 
-//impl Default for NMEAMsg {
-//    fn default () -> NMEAMsg {
-//        NMEAMsg{controller_num: 0, priority: 0, pgn:0, source:0, data_length_bytes:0, data:Vec::new()}
-//    }
-//}
+impl Default for NMEAMsg {
+    fn default () -> NMEAMsg {
+        NMEAMsg{controller_num: 0, priority: 0, pgn:0, source:0, data_length_bytes:0, data:Vec::new()}
+    }
+}
 
 /// Converts a char array to a NMEA message
 pub fn string_to_nmea(chars: *const char, length: i32, msg: &mut NMEAMsg) -> bool{
@@ -68,5 +68,6 @@ pub fn string_to_nmea(chars: *const char, length: i32, msg: &mut NMEAMsg) -> boo
 }
 
 /// Converts a NMEA messages to a char array
-pub fn nmea_to_string(){}
+pub fn nmea_to_string(){
+}
 

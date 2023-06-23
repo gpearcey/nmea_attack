@@ -14,8 +14,8 @@ RUSTFLAGS="-C link-arg=--strip-all -C link-arg=-zstack-size=8192 -C link-arg=--e
 
 cd target/wasm32-wasi/release
 
-xxd -i wasm_project.wasm > wasm_file.h
+xxd -i nmea_attack.wasm > nmea_attack.h
 
-mv wasm_file.h ../../../../can_controllers/main/
+mv nmea_attack.h ../../../../can_controllers/main/
 
 
