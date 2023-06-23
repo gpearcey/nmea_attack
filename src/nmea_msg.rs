@@ -1,7 +1,8 @@
 //! Contains a struct to represent a NMEA message and functions to convert between NMEAMsg and strings
 
 /// Represents a NMEA 2000 Message
-struct NMEAMsg {
+#[derive(Debug, Default)]
+pub struct NMEAMsg {
     controller_num:         u8,
     priority:               u8,
     pgn:                    u32,
@@ -10,46 +11,62 @@ struct NMEAMsg {
     data:                   Vec<u8>  
 }
 
+//impl Default for NMEAMsg {
+//    fn default () -> NMEAMsg {
+//        NMEAMsg{controller_num: 0, priority: 0, pgn:0, source:0, data_length_bytes:0, data:Vec::new()}
+//    }
+//}
+
 /// Converts a char array to a NMEA message
-fn string_to_nmea(chars: *const char, length: i32, msg: &mut NMEAMsg) -> bool{
-    if (length < 10) {        
+pub fn string_to_nmea(chars: *const char, length: i32, msg: &mut NMEAMsg) -> bool{
+    if length < 10 {        
         return false;
     }
 
     unsafe{
         let chars = std::slice::from_raw_parts(chars, length as usize);
 
-        msg.controller_num = chars[0].to_digit(16);
-        msg.priority = chars[1].to_digit(16);
+        // Set controller number
+        msg.controller_num = chars[0].to_digit(16).unwrap_or(0) as u8;
 
-        let pgn4 = chars[2].to_digit(16) : u32;
-        let pgn3 = chars[3].to_digit(16) : u32;
-        let pgn2 = chars[4].to_digit(16) : u32;
-        let pgn1 = chars[5].to_digit(16) : u32;
-        let pgn0 = chars[6].to_digit(16) : u32;
+        // Set priority
+        msg.priority = chars[1].to_digit(16).unwrap_or(0) as u8;
 
-        msg.pgn = ((pgn4 as u32) << 16) | ((pgn3 as u32) << 12) | ((pgn2 as u32) << 8) | ((pgn1 as u32) << 4) | (pgn0 as u32);
+        // Set PGN
+        let pgn4 = chars[2].to_digit(16).unwrap_or(0) as u32;
+        let pgn3 = chars[3].to_digit(16).unwrap_or(0) as u32;
+        let pgn2 = chars[4].to_digit(16).unwrap_or(0) as u32;
+        let pgn1 = chars[5].to_digit(16).unwrap_or(0) as u32;
+        let pgn0 = chars[6].to_digit(16).unwrap_or(0) as u32;
 
-        msg.source = chars[7].to_digit(16) : u8;
+        msg.pgn = (pgn4 << 16) | (pgn3 << 12) | (pgn2 << 8) | (pgn1 << 4) | pgn0;
 
-        let length1 = chars[8].to_digit(16) : u8;
-        let length0 = chars[9].to_digit(16) : u8;
+        // Set source
+        msg.source = chars[7].to_digit(16).unwrap_or(0) as u8;
 
-        msg.data_length_bytes = ((length1 as u8) << 4) | (length0 as u8);
+        // Set data length
+        let length1 = chars[8].to_digit(16).unwrap_or(0) as u8;
+        let length0 = chars[9].to_digit(16).unwrap_or(0) as u8;
 
-        let mut i = 0;
+        msg.data_length_bytes = (length1 << 4) | length0;
 
-        while( i < msg.data_length_bytes){
-            let value = chars[i+9].to_digit(16) : u8;
-            msg.data.push(value);
+        // Set data
+        let mut i: usize = 10;
+
+        while i < ((2 * msg.data_length_bytes + 10)).into() { // each char is 4 bytes, so two elements = one 8 byte piece of data
+            let value1 = chars[i].to_digit(16).unwrap_or(0) as u8;
             i += 1;
+            let value0 = chars[i].to_digit(16).unwrap_or(0) as u8;
+            i += 1;
+            let value = (value1 << 4) | value0;
+            msg.data.push(value);
         }
 
     }
 
-
+    return true;
 }
 
 /// Converts a NMEA messages to a char array
-fn nmea_to_string(){}
+pub fn nmea_to_string(){}
 
