@@ -3,9 +3,6 @@
 
 extern "C" {
 
-    #[link_name = "Test"]
-    pub fn Test() -> i32;
-
     /// Prints a char array as a string. Used for debugging purposes.
     #[link_name = "PrintStr"]
     pub fn PrintStr(input: *const u8, length: i32);

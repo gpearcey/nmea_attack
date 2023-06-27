@@ -35,7 +35,6 @@ fn main() {
 
     unsafe{
 
-        native_functions::Test();
         let message_received: i32 = native_functions::GetMsg();
         
         if message_received == 1 {
