@@ -64,51 +64,24 @@ use nmea_msg::NMEAMsg;
 fn main() {
 
     let mut msg = NMEAMsg::default();
-//
-    
-//
-    //println!("{:?}", msg);
 
-    //let mut msg = NMEAMsg {
-    //    controller_num:
-    //}
-    
-//    / let mut array: [char; 8] = ['1','2','3','4','5','6','7','8'];
-// /
-//    / let ptr = array.as_ptr();
     unsafe{
 
         native_functions::Test();
         let message_received: i32 = native_functions::GetMsg();
         
         if message_received == 1 {
-            
-            //native_functions::PrintInt32(343);
-            //native_functions::PrintStr(MSG_PTR, 8);
 
             msg = nmea_msg::string_to_nmea_no_ref(MSG_PTR,223);
-            //native_functions::PrintInt32(msg.controller_num as i32);
-            //native_functions::PrintInt32(msg.priority as i32);
-            //native_functions::PrintInt32(msg.pgn as i32);  
-            //native_functions::PrintInt32(msg.source as i32);    
-                        //let msg: NMEAMsg = nmea_msg::string_to_nmea_no_ref(MSG_PTR, 233);
-            //native_functions::PrintInt32(msg.pgn as i32);
+
+            native_functions::SendMsg(msg.controller_num as i32, msg.priority as i32, msg.pgn as i32, 22, msg.data.as_ptr(), msg.data_length_bytes as i32);
             
         }
+        //let ptr = msg.data.as_ptr();
+        //pub fn SendMsg(controller_number: i32, priority: i32, PGN: i32, source: i32, data: *const char, data_length_bytes: i32 ) -> i32;
 
-        //let message_converted = nmea_msg::string_to_nmea(MSG_PTR, 233, &mut msg);
-        //if message_converted == true {
-        //    native_functions::PrintInt32(msg.controller_num as i32);
-        //}
-
-        //msg.controller_num = 5;
-        //
-        //native_functions::PrintInt32(msg.controller_num as i32);
-        //let suc = native_functions::SendMsg(0,2,12750,22,ptr,8);}
         
     }
-    
-    //println!("{:?}", msg);
-    
+   
 
 }

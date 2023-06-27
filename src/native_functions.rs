@@ -21,5 +21,5 @@ extern "C" {
     
     /// Sends a NMEA message and specifies the controller queue it should be sent to  
     #[link_name = "SendMsg"]
-    pub fn SendMsg(controller_number: i32, priority: i32, PGN: i32, source: i32, data: *const char, data_length_bytes: i32 ) -> i32;
+    pub fn SendMsg(controller_number: i32, priority: i32, PGN: i32, source: i32, data: *const u8, data_length_bytes: i32 ) -> i32;
 }
