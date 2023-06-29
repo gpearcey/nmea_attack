@@ -18,7 +18,7 @@ static mut MSG_PTR: *const u8 = std::ptr::null();
 /// Sets MSG_PTR to the allocated wasm buffer so that when the native code updates the buffer, the updates can be accessed from within this app. 
 /// This function is called from the native code before the main() function is executed. 
 #[no_mangle]
-pub extern "C" fn link_msg_buffer(char_arr: *const u8, char_array_size: i32 ){
+pub extern "C" fn link_msg_buffer(char_arr: *const u8, _char_array_size: i32 ){
     unsafe {
         MSG_PTR = char_arr;
     }

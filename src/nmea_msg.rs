@@ -62,8 +62,6 @@ extern "C" {
     pub fn PrintInt32(input: i32, hex: i32);
 }
 
-use std::str::FromStr;
-
 /// Represents a NMEA 2000 Message
 #[derive(Debug)]
 pub struct NMEAMsg {
@@ -92,7 +90,7 @@ impl Default for NMEAMsg {
 ///
 /// Only meant for unicode inputs between 0x30 - 0x39 (0-9) and 0x41 - 0x46 (A - F)
 fn unicode_convert(unicode: u8) -> u8{
-    let mut num: u8;
+    let num: u8;
     num = match unicode {
         0x30 => 0x0,
         0x31 => 0x1,
