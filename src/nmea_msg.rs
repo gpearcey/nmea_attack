@@ -160,17 +160,15 @@ pub fn chars_to_nmea(chars: *const u8, length: i32) -> NMEAMsg{
         let mut ls: u8; // least significant nibble
         let mut data_byte: u8; //complete byte of data
 
-        
         while i < (((2 * msg.data_length_bytes) -1 ) as usize) { 
             ms = unicode_convert(data_array[i]);
             i = i + 1;
             ls = unicode_convert(data_array[i]);
-            i += i + 1;
+            i = i + 1;
             data_byte = (ms << 4) | ls;
 
             msg.data[count] = data_byte;
-
-            count = count + 1;
+            count = count + 1;            
         }
     }
 

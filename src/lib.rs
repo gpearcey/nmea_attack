@@ -41,7 +41,7 @@ fn main() {
 
             msg = nmea_msg::chars_to_nmea(MSG_PTR,223);
 
-            native_functions::SendMsg(msg.controller_num as i32, msg.priority as i32, msg.pgn as i32, 22, msg.data.as_ptr(), msg.data_length_bytes as i32);
+            native_functions::SendMsg(msg.controller_num as i32, msg.priority as i32, msg.pgn as i32, 14 as i32, msg.data.as_ptr(), msg.data_length_bytes as i32);
             
         }
 
