@@ -41,10 +41,16 @@ fn main() {
         
         if message_received == 1 {
 
+            native_functions::RemoveAppDelay();
+
             msg = nmea_msg::chars_to_nmea(MSG_PTR,nmea_msg::MAX_DATA_LENGTH_BYTES);
 
             native_functions::SendMsg(msg.controller_num as i32, msg.priority as i32, msg.pgn as i32, 14 as i32, msg.data.as_ptr(), msg.data_length_bytes as i32);
             
+        }
+
+        else{
+            native_functions::AddAppDelay();
         }
 
     }

@@ -11,6 +11,12 @@ extern "C" {
     #[link_name = "PrintInt32"]
     pub fn PrintInt32(input: i32, hex: i32);
 
+    #[link_name = "AddAppDelay"]
+    pub fn AddAppDelay();
+
+    #[link_name = "RemoveAppDelay"]
+    pub fn RemoveAppDelay();
+
     /// Puts a new message in the wasm app buffer from the read queue
     #[link_name = "GetMsg"]
     pub fn GetMsg() -> i32;
