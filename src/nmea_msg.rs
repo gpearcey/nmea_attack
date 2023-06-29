@@ -62,6 +62,9 @@ extern "C" {
     pub fn PrintInt32(input: i32, hex: i32);
 }
 
+pub const MAX_DATA_LENGTH_BYTES: i32 = 223; //Maximum NMEA fastpacket message size
+const ID_LENGTH: i32 = 10; //First 10 bytes are for the ID
+
 /// Represents a NMEA 2000 Message
 #[derive(Debug)]
 pub struct NMEAMsg {
@@ -70,7 +73,7 @@ pub struct NMEAMsg {
     pub pgn:                    u32,
     pub source:                 u8,
     pub data_length_bytes:      u8,
-    pub data:                   [u8; 223],
+    pub data:                   [u8; MAX_DATA_LENGTH_BYTES as usize],
 }
 
 /// Used to create a message with default values that are easier to identify as errors. If they don't get set properly, it will be easier to tell.
@@ -81,7 +84,7 @@ impl Default for NMEAMsg {
                 pgn:0,                // no pgns are 0         
                 source: 255,          // unlikely that the source is 255
                 data_length_bytes:0,  // data)length bytes should always be greater than 0
-                data: [0; 223],
+                data: [0; MAX_DATA_LENGTH_BYTES as usize],
         }
     }
 }
@@ -116,16 +119,15 @@ fn unicode_convert(unicode: u8) -> u8{
 /// Converts a char array to a NMEA message
 pub fn chars_to_nmea(chars: *const u8, length: i32) -> NMEAMsg{
     let mut msg = NMEAMsg::default();
-    let id_length = 10;
 
-    // a valid message has at least 10 elements
-    if length < id_length {      
+    // length must contain a full ID
+    if length < ID_LENGTH {      
         return msg;
     }
 
 
     unsafe{
-        let id_array = std::slice::from_raw_parts(chars, id_length as usize);
+        let id_array = std::slice::from_raw_parts(chars, ID_LENGTH as usize);
 
         // Set controller number
         msg.controller_num = unicode_convert(id_array[0]);
@@ -152,7 +154,8 @@ pub fn chars_to_nmea(chars: *const u8, length: i32) -> NMEAMsg{
         msg.data_length_bytes = (length1 << 4) | length0;
 
         // Set data
-        let data_array = std::slice::from_raw_parts(chars.offset(10), 223*2 as usize);
+        // max data length multiplied by 2 because data is split up into nibbles, 2 nibbles form a bytes
+        let data_array = std::slice::from_raw_parts(chars.offset(ID_LENGTH as isize), (MAX_DATA_LENGTH_BYTES*2) as usize); 
 
         let mut i = 0;
         let mut count = 0;

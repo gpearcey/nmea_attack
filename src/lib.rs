@@ -4,11 +4,13 @@
 //!
 //! A libary design to be compiled as a WebAssembley (wasm) app used to launch attacks on a NMEA 2000 network
 
-use nmea_msg::NMEAMsg;
+
 
 // Modules
 mod nmea_msg;
 mod native_functions;
+
+use nmea_msg::NMEAMsg;
 
 /// Points to a message requested from the native read queue
 static mut MSG_PTR: *const u8 = std::ptr::null();
@@ -39,7 +41,7 @@ fn main() {
         
         if message_received == 1 {
 
-            msg = nmea_msg::chars_to_nmea(MSG_PTR,223);
+            msg = nmea_msg::chars_to_nmea(MSG_PTR,nmea_msg::MAX_DATA_LENGTH_BYTES);
 
             native_functions::SendMsg(msg.controller_num as i32, msg.priority as i32, msg.pgn as i32, 14 as i32, msg.data.as_ptr(), msg.data_length_bytes as i32);
             
