@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["link_msg_buffer","main"],"mod":["native_functions","nmea_msg"],"static":["MSG_PTR"]};

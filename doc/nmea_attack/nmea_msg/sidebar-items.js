@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["ID_LENGTH","MAX_DATA_LENGTH_BYTES"],"fn":["PrintInt32","PrintStr","chars_to_nmea","unicode_convert"],"struct":["NMEAMsg"]};
