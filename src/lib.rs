@@ -51,6 +51,15 @@ fn main() {
 
         else{
             native_functions::AddAppDelay();
+            //let mut msg1 = NMEAMsg::default();
+            //msg1.controller_num = 0;
+            //msg1.priority = 3;
+            //msg1.pgn = 127250;
+            //msg1.source = 13;
+            //msg1.data = [0; 223 as usize];
+            //msg1.data_length_bytes = 3;
+//
+            //native_functions::SendMsg(msg1.controller_num as i32, msg1.priority as i32, msg1.pgn as i32, 12 as i32, msg1.data.as_ptr(), msg1.data_length_bytes as i32);
         }
 
     }
