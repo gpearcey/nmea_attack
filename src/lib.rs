@@ -29,39 +29,24 @@ pub extern "C" fn link_msg_buffer(char_arr: *const u8, _char_array_size: i32 ){
 
 /// Main execution loop
 ///
-/// Called from native code as a pthread. Requests messages from the read queue, modifies certain messages, and send messages out on the appropriate send queue. 
+/// Called from native code as a pthread. Reads messages from MSG_PTR, modifies certain messages, and send messages out on the appropriate send queue. 
 #[no_mangle]
 fn main() {
 
     let mut msg = NMEAMsg::default();
 
     unsafe{
-
-        let message_received: i32 = native_functions::GetMsg();
+        msg = nmea_msg::chars_to_nmea(MSG_PTR,nmea_msg::MAX_DATA_LENGTH_BYTES);
+        native_functions::SendMsg(msg.controller_num as i32, msg.priority as i32, msg.pgn as i32, 14 as i32, msg.data.as_ptr(), msg.data_length_bytes as i32);
+        //let mut msg1 = NMEAMsg::default();
+        //msg1.controller_num = 0;
+        //msg1.priority = 3;
+        //msg1.pgn = 127250;
+        //msg1.source = 13;
+        //msg1.data = [0; 223 as usize];
+        //msg1.data_length_bytes = 3;
+        //native_functions::SendMsg(msg1.controller_num as i32, msg1.priority as i32, msg1.pgn as i32, 12 as i32, msg1.data.as_ptr(), msg1.data_length_bytes as i32);
         
-        if message_received == 1 {
-
-            native_functions::RemoveAppDelay();
-
-            msg = nmea_msg::chars_to_nmea(MSG_PTR,nmea_msg::MAX_DATA_LENGTH_BYTES);
-
-            native_functions::SendMsg(msg.controller_num as i32, msg.priority as i32, msg.pgn as i32, 14 as i32, msg.data.as_ptr(), msg.data_length_bytes as i32);
-            
-        }
-
-        else{
-            native_functions::AddAppDelay();
-            //let mut msg1 = NMEAMsg::default();
-            //msg1.controller_num = 0;
-            //msg1.priority = 3;
-            //msg1.pgn = 127250;
-            //msg1.source = 13;
-            //msg1.data = [0; 223 as usize];
-            //msg1.data_length_bytes = 3;
-//
-            //native_functions::SendMsg(msg1.controller_num as i32, msg1.priority as i32, msg1.pgn as i32, 12 as i32, msg1.data.as_ptr(), msg1.data_length_bytes as i32);
-        }
-
     }
    
 

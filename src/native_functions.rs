@@ -16,10 +16,6 @@ extern "C" {
 
     #[link_name = "RemoveAppDelay"]
     pub fn RemoveAppDelay();
-
-    /// Puts a new message in the wasm app buffer from the read queue
-    #[link_name = "GetMsg"]
-    pub fn GetMsg() -> i32;
     
     /// Sends a NMEA message and specifies the controller queue it should be sent to  
     #[link_name = "SendMsg"]
