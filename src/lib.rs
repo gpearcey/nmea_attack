@@ -49,22 +49,18 @@ fn main() {
     let mut msg = NMEAMsg::default();
 
     unsafe{
-        //native_functions::PrintInt32(5 as i32, 1 as i32);
-        //let input_ptr = MODE_PTR;
-        //let input_len = 1;
+        // Get Mode
         let id_array = std::slice::from_raw_parts(MODE_PTR, 1 as usize);
-
         let mode = id_array[0];
-        
-        native_functions::PrintInt32(mode as i32, 1 as i32);
 
         if mode == 48
         {
+            // OFF Mode
             // Do Nothing
         }
         else if (mode == 49) //0x31 in decimal
         {
-            // Passive Mode
+            // PASSIVE Mode
             msg = nmea_msg::chars_to_nmea(MSG_PTR,nmea_msg::MAX_DATA_LENGTH_BYTES);
 
             if msg.controller_num == 0 {
@@ -82,7 +78,7 @@ fn main() {
         }
         else if mode == 50
         {
-            // TODO - GPS Attack
+            // TODO - GPS Attack Mode
         }
 
     
