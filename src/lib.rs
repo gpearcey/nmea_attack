@@ -37,10 +37,20 @@ fn main() {
 
     unsafe{
         msg = nmea_msg::chars_to_nmea(MSG_PTR,nmea_msg::MAX_DATA_LENGTH_BYTES);
-        //native_functions::SendMsg(msg.controller_num as i32, msg.priority as i32, msg.pgn as i32, 14 as i32, msg.data.as_ptr(), msg.data_length_bytes as i32);
-        native_functions::SendMsg(1 as i32, msg.priority as i32, msg.pgn as i32, 14 as i32, msg.data.as_ptr(), msg.data_length_bytes as i32);
+
+        if msg.controller_num == 0 {
+            native_functions::SendMsg(1 as i32, msg.priority as i32, msg.pgn as i32, 14 as i32, msg.data.as_ptr(), msg.data_length_bytes as i32); // Send to controller 1
+            native_functions::SendMsg(2 as i32, msg.priority as i32, msg.pgn as i32, 14 as i32, msg.data.as_ptr(), msg.data_length_bytes as i32); // Send to controller 2
+        }
+        else if msg.controller_num == 1{
+            native_functions::SendMsg(0 as i32, msg.priority as i32, msg.pgn as i32, 14 as i32, msg.data.as_ptr(), msg.data_length_bytes as i32); // Send to controller 0
+            native_functions::SendMsg(2 as i32, msg.priority as i32, msg.pgn as i32, 14 as i32, msg.data.as_ptr(), msg.data_length_bytes as i32); // Send to controller 2
+        }
+        else if msg.controller_num == 2{
+            native_functions::SendMsg(0 as i32, msg.priority as i32, msg.pgn as i32, 14 as i32, msg.data.as_ptr(), msg.data_length_bytes as i32); // Send to controller 0
+            native_functions::SendMsg(1 as i32, msg.priority as i32, msg.pgn as i32, 14 as i32, msg.data.as_ptr(), msg.data_length_bytes as i32); // Send to controller 1
+        }        
         
-    }
-   
+    }  
 
 }
