@@ -58,7 +58,7 @@ fn main() {
             // OFF Mode
             // Do Nothing
         }
-        else if (mode == 49) //0x31 in decimal
+        else if (mode == 49) //0x31 in decima, ACSII for 1
         {
             // PASSIVE Mode
             msg = nmea_msg::chars_to_nmea(MSG_PTR,nmea_msg::MAX_DATA_LENGTH_BYTES);
@@ -79,6 +79,11 @@ fn main() {
         else if mode == 50
         {
             // TODO - GPS Attack Mode
+            let mut mod_msg = NMEAMsg::default();
+            msg = nmea_msg::chars_to_nmea(MSG_PTR,nmea_msg::MAX_DATA_LENGTH_BYTES);
+            mod_msg = 
+
+
         }
 
     
