@@ -9,6 +9,7 @@
 // Modules
 mod nmea_msg;
 mod native_functions;
+mod gps_attack;
 
 use nmea_msg::NMEAMsg;
 
@@ -58,7 +59,7 @@ fn main() {
             // OFF Mode
             // Do Nothing
         }
-        else if (mode == 49) //0x31 in decima, ACSII for 1
+        else if mode == 49 //0x31 in decima, ACSII for 1
         {
             // PASSIVE Mode
             msg = nmea_msg::chars_to_nmea(MSG_PTR,nmea_msg::MAX_DATA_LENGTH_BYTES);
@@ -81,13 +82,11 @@ fn main() {
             // TODO - GPS Attack Mode
             let mut mod_msg = NMEAMsg::default();
             msg = nmea_msg::chars_to_nmea(MSG_PTR,nmea_msg::MAX_DATA_LENGTH_BYTES);
-            mod_msg = 
+          //  mod_msg = 
 
 
-        }
+        }    
 
-    
-        
     }  
 
 }
