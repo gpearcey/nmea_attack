@@ -12,6 +12,7 @@ mod native_functions;
 mod gps_attack;
 
 use nmea_msg::NMEAMsg;
+use crate::gps_attack::attack;
 
 /// Points to a message requested from the native read queue
 static mut MSG_PTR: *const u8 = std::ptr::null();
@@ -79,10 +80,23 @@ fn main() {
         }
         else if mode == 50
         {
-            // TODO - GPS Attack Mode
+            // GPS Attack Mode
             let mut mod_msg = NMEAMsg::default();
             msg = nmea_msg::chars_to_nmea(MSG_PTR,nmea_msg::MAX_DATA_LENGTH_BYTES);
-          //  mod_msg = 
+            mod_msg = attack(msg); // modified message
+
+            if mod_msg.controller_num == 0 {
+                native_functions::SendMsg(1 as i32, mod_msg.priority as i32, mod_msg.pgn as i32, mod_msg.source as i32, mod_msg.data.as_ptr(), mod_msg.data_length_bytes as i32); // Send to controller 1
+                native_functions::SendMsg(2 as i32, mod_msg.priority as i32, mod_msg.pgn as i32, mod_msg.source as i32, mod_msg.data.as_ptr(), mod_msg.data_length_bytes as i32); // Send to controller 2
+            }
+            else if mod_msg.controller_num == 1{
+                native_functions::SendMsg(0 as i32, mod_msg.priority as i32, mod_msg.pgn as i32, mod_msg.source as i32, mod_msg.data.as_ptr(), mod_msg.data_length_bytes as i32); // Send to controller 0
+                native_functions::SendMsg(2 as i32, mod_msg.priority as i32, mod_msg.pgn as i32, mod_msg.source as i32, mod_msg.data.as_ptr(), mod_msg.data_length_bytes as i32); // Send to controller 2
+            }
+            else if mod_msg.controller_num == 2{
+                native_functions::SendMsg(0 as i32, mod_msg.priority as i32, mod_msg.pgn as i32, mod_msg.source as i32, mod_msg.data.as_ptr(), mod_msg.data_length_bytes as i32); // Send to controller 0
+                native_functions::SendMsg(1 as i32, mod_msg.priority as i32, mod_msg.pgn as i32, mod_msg.source as i32, mod_msg.data.as_ptr(), mod_msg.data_length_bytes as i32); // Send to controller 1
+            } 
 
 
         }    
