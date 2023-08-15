@@ -50,8 +50,8 @@ fn main() {
 
     unsafe{
         // Get Mode
-        let id_array = std::slice::from_raw_parts(MODE_PTR, 1 as usize);
-        let mode = id_array[0];
+        let mode_arr = std::slice::from_raw_parts(MODE_PTR, 1 as usize);
+        let mode = mode_arr[0];
 
         if mode == 48
         {
