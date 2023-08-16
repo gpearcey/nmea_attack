@@ -2,6 +2,18 @@ use crate::NMEAMsg;
 static mut LAST_LAT: i32 = 0;
 static mut LAST_LON: i32 = 0;
 
+//only here temp. will be deleted after
+extern "C" {
+
+    // Prints a char array as a string. Used for debugging purposes.
+    #[link_name = "PrintStr"]
+    pub fn PrintStr(input: *const u8, length: i32);
+
+    // Prints an integer. Used for debugging purposes.
+    #[link_name = "PrintInt32"]
+    pub fn PrintInt32(input: i32, hex: i32);
+}
+
 /// Modifies a Position, Rapid Update message
 ///
 /// For PGN 129025
@@ -52,16 +64,16 @@ pub fn _129025(mut msg: NMEAMsg) -> NMEAMsg{
 /// For PGN 127250
 /// Changes the heading by 180 degrees
 pub fn _127250(mut msg: NMEAMsg) -> NMEAMsg{
-
+    unsafe{
     // Extract the heading data
-    let heading_bytes: [u8; 2] = [msg.data[1], msg.data[2]];
-    let original_hdg: u16 = u16::from_be_bytes(heading_bytes);
+    let heading_bytes: [u8; 2] = [msg.data[1], msg.data[2]];;
+    let original_hdg: u16 = u16::from_le_bytes(heading_bytes);
 
     // Modify the heading by adding 3.1415 radians and wrapping
     let modified_hdg = (original_hdg + (std::f32::consts::PI * 65536.0 / (2.0 * std::f32::consts::PI)) as u16); // as u16 provides wrapping behaviour so we don't need to include % 65536
 
     // Convert the modified heading back to bytes
-    let modified_hdg_bytes: [u8; 2] = modified_hdg.to_be_bytes();
+    let modified_hdg_bytes: [u8; 2] = modified_hdg.to_le_bytes();
 
     // Update the msg.data array with the modified heading
     msg.data[1..3].copy_from_slice(&modified_hdg_bytes);
