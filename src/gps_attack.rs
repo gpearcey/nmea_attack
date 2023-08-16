@@ -1,6 +1,6 @@
 use crate::NMEAMsg;
-static mut LAST_LAT: i32 = 0;
-static mut LAST_LON: i32 = 0;
+static mut LAST_LAT: i32 = 670000000;
+static mut LAST_LON: i32 = -720000000;
 
 //only here temp. will be deleted after
 extern "C" {
@@ -24,30 +24,38 @@ pub fn _129025(mut msg: NMEAMsg) -> NMEAMsg{
     // Latitude
     let mut lat_arr: [u8; 4] = [0; 4]; 
     lat_arr.copy_from_slice(&msg.data[0..4]);   
-    let lat: i32 = i32::from_be_bytes(lat_arr); 
+    let lat: i32 = i32::from_le_bytes(lat_arr); 
 
     // Longitude
     let mut lon_arr: [u8; 4] = [0; 4]; 
     lon_arr.copy_from_slice(&msg.data[4..8]);
-    let lon: i32 = i32::from_be_bytes(lon_arr);  
+    let lon: i32 = i32::from_le_bytes(lon_arr);  
 
     // get the differences and calculate fake coordinate in opposite direction
     let lat_diff: i32;
     let lon_diff: i32;
 
     unsafe {
-        lat_diff = lat - LAST_LAT;
-        lon_diff = lon - LAST_LON;
+        if (LAST_LAT == 0) | (LAST_LON == 0) // check if first run
+        {
+            lat_diff = lat;
+            lon_diff = lon;
+        }
+        else
+        {
+            lat_diff = lat - LAST_LAT;
+            lon_diff = lon - LAST_LON;
+        }
     }
-    
+
     let fake_lat = lat - lat_diff;    
     let fake_lon = lon - lon_diff;
 
     // put fake data into messages
-    let lat_bytes: [u8; 4] = fake_lat.to_be_bytes();
+    let lat_bytes: [u8; 4] = fake_lat.to_le_bytes();
     msg.data[0..4].copy_from_slice(&lat_bytes);
 
-    let lon_bytes: [u8; 4] = fake_lon.to_be_bytes();
+    let lon_bytes: [u8; 4] = fake_lon.to_le_bytes();
     msg.data[4..8].copy_from_slice(&lon_bytes);
     
     unsafe {
