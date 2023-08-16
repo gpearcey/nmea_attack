@@ -64,7 +64,6 @@ pub fn _129025(mut msg: NMEAMsg) -> NMEAMsg{
 /// For PGN 127250
 /// Changes the heading by 180 degrees
 pub fn _127250(mut msg: NMEAMsg) -> NMEAMsg{
-    unsafe{
     // Extract the heading data
     let heading_bytes: [u8; 2] = [msg.data[1], msg.data[2]];;
     let original_hdg: u16 = u16::from_le_bytes(heading_bytes);
