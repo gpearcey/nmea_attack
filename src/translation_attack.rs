@@ -1,6 +1,6 @@
 use crate::NMEAMsg;
-static LAT_DIFF: i32 = 250000000;
-static LON_DIFF: i32 = 250000000;
+static LAT_DIFF: i32 = 10000000;
+static LON_DIFF: i32 = 10000000;
 
 //only here temp. will be deleted after - for debugging
 extern "C" {

@@ -10,6 +10,7 @@
 mod nmea_msg;
 mod native_functions;
 mod opposite_dir_attack;
+mod translation_attack;
 
 use nmea_msg::NMEAMsg;
 use crate::opposite_dir_attack::opp_dir_attack;
@@ -61,7 +62,7 @@ fn main() {
             // OFF Mode
             // Do Nothing
         }
-        else if mode == 49 //0x31 in decima, ACSII for 1
+        else if mode == 49 //0x31 in decimal, ACSII for 1
         {
             // PASSIVE Mode
             msg = nmea_msg::chars_to_nmea(MSG_PTR,nmea_msg::MAX_DATA_LENGTH_BYTES);
@@ -88,6 +89,7 @@ fn main() {
 
             if msg.pgn != 129029 // Blocking 129029 for now because have not yet implemented a method to handle data spanning multiple CAN frames
             {
+                
                 mod_msg = opp_dir_attack(msg); // modified message
 
                 if mod_msg.controller_num == 0 {
